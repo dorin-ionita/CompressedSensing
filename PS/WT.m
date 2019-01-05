@@ -20,21 +20,21 @@ classdef WT
             
             if isnumeric(amplify)
                 wvl.Amplify = ones(3 * wvl.Level + 1);
-                wvl.Amplify(0) = amplify;
+                wvl.Amplify(1) = amplify;
             end
         end
         
         function cVec_list = call(wvn)
             [C, S] = wavedec2(I_Mat, wvn.Level, wvn.Wavelet);
             
-            cMat_list = C(0);
+            cMat_list = C(1);
             for i = 1:length(C)
-                cMat_list = cMat_list + list(C(i));
+                cMat_list = [cMat_list list(C(i))];
             end
             
             wvn.cMat_shapes = vectorize(cMat_list);
             
-            for j = 0:(3*wvn.Level + 1)
+            for j = 1:(3*wvn.Level + 1)
                 current = cMat_list(j) * wvn.Amplify(j);
                 cVec_list = [cVec_list current];
             end
@@ -59,11 +59,11 @@ classdef WT
                 cVec_list = [cVec_list current];
             end            
             
-            coeffs = reshape(cVec_list(0), wvn.cMat_shapes(0));
+            coeffs = reshape(cVec_list(1), wvn.cMat_shapes(1));
             
             for j = 0:wvn.Level
                 triple = cVec_list(3*j + 1:3*(j+1)+1);
-                for i = 0:3
+                for i = 1:3
                     triple = reshape(triple(i), wvn.cMat_shapes(1 + 3*j + i));
                 end
                 coeffs = coeffs + tuple(triple);
