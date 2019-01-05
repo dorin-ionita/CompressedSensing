@@ -12,15 +12,13 @@ classdef HardThreshold
         end
         
         function x = call(x)
-            x = x[cL(obj.s, x)] = 0;
+            length_x = size(x);
+            length_x = length_x(1);
+            how_many_to_eliminate = length_x - obj.s;
+            [~, indexes_x] = sort(abs(x), 'ascend');
+            indexes_x = indexes_x(1:how_many_to_eliminate);
+            x(indexes_x) = 0;
         end
-        
-        function aggregate = cL(s, x)
-            ns = size(x);
-            ns = ns(1) - s;
-            aggregate = 
-        end
-        
     end
     
 end

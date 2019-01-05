@@ -29,5 +29,7 @@ wavelet_trans = WaveletTransform(original_shape, 'db6', L, amp);
 s = no_pixels / compression_factor;
 s = int32(s);
 
+threshold_operator = HardThreshold(s)
+
 
 
