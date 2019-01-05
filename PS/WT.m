@@ -66,7 +66,7 @@ classdef WT
                 for i = 1:3
                     triple = reshape(triple(i), wvn.cMat_shapes(1 + 3*j + i));
                 end
-                coeffs = coeffs + tuple(triple);
+                coeffs = [coeffs triple];
             end
             
             waver = waverec2(coeffs, self.Wavelet);
