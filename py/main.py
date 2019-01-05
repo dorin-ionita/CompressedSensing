@@ -115,30 +115,60 @@ pic_file = "./pics/copii_frumosi.jpg"
 
 Xorig = spimg.imread(pic_file, flatten=True, mode='L')
 
-x = pywt.wavedec2(Xorig, wavelet='db1', level=1)
-# Genereaza o serie ortonormata pentru imaginea data, folosind transformarea wavelet
-# Cum un wavelet defineste baza ortonormata a unui spatiu Hilbert, obtin fix baza de care am nevoie
-# https://en.wikipedia.org/wiki/Wavelet_transform
-Xorig = pywt.waverec2(x, wavelet='db1')
-# Inverse wavelet transform
+imsave("./pics/original.jpg", Xorig)
 
+x = pywt.wavedec2(Xorig, wavelet='db1', level=1)
+
+# TODO: remove
+# print("Length:", len(x))
+# print(x[0].shape)
+# print("The wavelet decomposition: ", x)
+
+# # Genereaza o serie ortonormata pentru imaginea data, folosind transformarea wavelet
+# # Cum un wavelet defineste baza ortonormata a unui spatiu Hilbert, obtin fix baza de care am nevoie
+# # https://en.wikipedia.org/wiki/Wavelet_transform
+# Xorig = pywt.waverec2(x, wavelet='db1')
+# # Inverse wavelet transform
+#
 shape = Xorig.shape
+
+# # TODO: remove
+# print("SHAPE IS", shape)
+
 n = np.prod(shape)
+
+# TODO: remove
+# print("SHAPE IS", n)
 
 L = 3
 amp = np.linspace(1,.5,L)
+
+
 amp = np.kron(amp, np.ones(3) )
+
+
 amp = np.insert(amp,0, 10 ) #prepend (position 0)
 
-# Alegere parametrii wavelet
+
+# print("amp: ", amp)
+
+#
+# # Alegere parametrii wavelet
 T = WT(shape, wavelet='db6',level=L, amplify=amp)
+#
+# print("T: ", T.shape, " ", T.wavelet, " ", T.level, " ",
+#       T.cMat_shapes, " ", T.amplify)
 
-# Alege cu norma l1 (the magic of l1)
+#
+# # Alege cu norma l1 (the magic of l1)
 s = int( np.prod(shape)/20 )
+
+# print("S: " , np.prod(shape), s)
+
 TO = hardTO(s)
-
-# compression test
-cXorig = compress(T,TO,Xorig)
-
-imsave("./pics/original.jpg", Xorig)
-imsave("./pics/original_reconstruit.jpg", cXorig)
+#
+# # compression test
+# cXorig = compress(T,TO,Xorig)
+#
+# imsave("./pics/original.jpg", Xorig)
+# imsave("./pics/original_reconstruit.jpg", cXorig)
