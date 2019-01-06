@@ -24,6 +24,7 @@ class WT(AbstractOperator):
         # tbd: implement others
         cMat_list = [coeffs[0]]
         for c in coeffs[1:]:
+            # print("C is", c)
             cMat_list = cMat_list + list(c)
         # memorize all shapes for inv
         self.cMat_shapes = list(map(np.shape, cMat_list))

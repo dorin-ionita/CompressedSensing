@@ -29,16 +29,43 @@ class WT():
 
     def __call__(self, image):
         coeffs = pywt.wavedec2(image, wavelet=self.wavelet, level=self.level)
+        # print("COEFS ARE", len(coeffs),
+        #       len(coeffs[0]), len(coeffs[1]),
+        #       len(coeffs[2]), len(coeffs[2]))
         # format: [cAn, (cHn, cVn, cDn), ...,(cH1, cV1, cD1)] , n=level
 
         # to list of np.arrays
         # multiply with self.amplify[0] to have them more strongly weighted in compressions
         # tbd: implement others
         cMat_list = [coeffs[0]]
+
+        # print("IMG SHAPE", np.shape(image))
+        #
+        # print("len coefs0", np.shape(coeffs[0]))
+        # print("len coefs1", np.shape(coeffs[1][0]), coeffs[1][0])
+        # print("len coefs1", np.shape(coeffs[1][1]))
+        # print("len coefs1", np.shape(coeffs[1][2]))
+        # print("len coefs1", np.shape(coeffs[2][0]))
+        # print("len coefs1", np.shape(coeffs[2][1]))
+        # print("len coefs1", np.shape(coeffs[2][2]))
+        # print("len coefs7", np.shape(coeffs[3][0]))
+        # print("len coefs1", np.shape(coeffs[3][1]))
+        # print("len coefs1", np.shape(coeffs[3][2]), coeffs)
+        # print("len coefs1", np.shape(coeffs[1][0])
+
+        # print("len_cofes1", np.shape(coeffs[1]), coeffs[1])
+        # print("len_cofs2", len(coeffs[1][1]))
+        # print("len_coefs", len(coeffs))
+
+
         for c in coeffs[1:]:
+            # print("coefs", c)
             cMat_list = cMat_list + list(c)
         # memorize all shapes for inv
+        #print(cMat_list)e shape dimension can be -1
+
         self.cMat_shapes = list(map(np.shape, cMat_list))
+        print(self.cMat_shapes)
 
         # array vectorization
         vect = lambda array: np.array(array).reshape(-1)
@@ -62,7 +89,11 @@ class WT():
 
         cVec_shapes = list(map(np.prod, self.cMat_shapes))
 
+        print("CVEC SHAPES", cVec_shapes)
+
         split_indices = list(accumulate(cVec_shapes))
+
+        print("SPLIT INDICES", split_indices)
 
         cVec_list = np.split(wavelet_vector, split_indices)
 
@@ -94,6 +125,7 @@ class hardTO(object):
 
 def cL(s,x):
     '''returns n-s abs-smallest indices of vector x'''
+    print("X primit este", x)
     ns = len(x)-s
     return np.argpartition(abs(x),ns)[:ns]
 
@@ -114,6 +146,8 @@ def compress(T, TO, image):
 pic_file = "./pics/copii_frumosi.jpg"
 
 Xorig = spimg.imread(pic_file, flatten=True, mode='L')
+
+print(Xorig[0:49][0:49])
 
 imsave("./pics/original.jpg", Xorig)
 
@@ -168,7 +202,7 @@ s = int( np.prod(shape)/20 )
 TO = hardTO(s)
 #
 # # compression test
-# cXorig = compress(T,TO,Xorig)
+cXorig = compress(T,TO,Xorig)
 #
 # imsave("./pics/original.jpg", Xorig)
 # imsave("./pics/original_reconstruit.jpg", cXorig)
