@@ -77,32 +77,46 @@ classdef WT
         
         function waver = inv(wvn, wavelet_vector)
             if isempty(wvn.cMat_shapes)
-                print("Call WT first to obtain shapes of coefficient matrices")
+                disp("Call WT first to obtain shapes of coefficient matrices")
                 return
             end
-            
-            cVec_shapes = prod(wvn.cMat_shapes);
-            split_indices = list(cumsum(cVec_shapes));
-            
-            cVec_list = split(wavelet_vector, split_indices);
-            
-            
-            for j = 0:(3*wvn.Level + 1)
-                current = cMat_list(j) / wvn.Amplify(j);
-                cVec_list = [cVec_list current];
-            end            
-            
-            coeffs = reshape(cVec_list(1), wvn.cMat_shapes(1));
-            
-            for j = 0:wvn.Level
-                triple = cVec_list(3*j + 1:3*(j+1)+1);
-                for i = 1:3
-                    triple = reshape(triple(i), wvn.cMat_shapes(1 + 3*j + i));
+
+            cVec_shapes = wvn.cMat_shapes;
+            split_indices = cumsum(cVec_shapes);
+
+            ind = 1;
+            j = 1;
+            current = [];
+
+            for i=1:size(wavelet_vector, 2)
+                current = [current wavelet_vector(i)];
+                
+                if ind > size(split_indices)
+                    cVec_list{j} = current;
+                else
+                    if wavelet_vector(i) == split_indices(ind)
+                        cVec_list{j} = current;
+                        ind = ind + 1;
+                        j = j + 1;
+                        current = [];
+                    end
                 end
-                coeffs = [coeffs triple];
             end
+
+%             cVec_list = split(wavelet_vector, split_indices);
             
-            waver = waverec2(coeffs, self.Wavelet);
+            final_cVec_list = []
+
+            for j = 1:(3*wvn.Level + 1)
+                current = cVec_list{j} / wvn.Amplify(j);
+                final_cVec_list = [final_cVec_list current];
+            end
+
+%             coeffs = reshape(cVec_list(1), wvn.cMat_shapes(1));
+
+            waver = waverec2(cVec_list, self.Wavelet);
+            
+            
         end
      
     end
