@@ -69,15 +69,6 @@ classdef WaveletTransform
         end
        
         function recovered_image = inverse(obj, x, S, new_shapes)
-%             new_shapes = zeros(1, 1 + 3 * (length(obj.cMat_shape) - 1));
-%             new_shapes(1) = obj.cMat_shape(1);
-%             current_j = 2;
-%             for i = 2 : 3 : length(new_shapes)
-%                 new_shapes(i) = obj.cMat_shape(current_j);
-%                 new_shapes(i + 1) = obj.cMat_shape(current_j);
-%                 new_shapes(i + 2) = obj.cMat_shape(current_j);
-%                 current_j = current_j + 1;
-%             end
             
             initial_idx = 1;
             for i = 1:length(obj.amplify)

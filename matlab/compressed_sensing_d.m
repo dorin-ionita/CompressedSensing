@@ -39,12 +39,12 @@ threshold_operator = HardThreshold(s);
 
 compressed_picture = compress(wavelet_operator, threshold_operator, picture);
 
-compressed_picture = int8(compressed_picture);
+compressed_picture = uint8(compressed_picture);
 
 disp(size(compressed_picture))
 
 disp(compressed_picture(1:10, 1:10))
-% imwrite(compressed_picture, picture_2_path);
+imwrite(compressed_picture, picture_2_path);
 imshow(compressed_picture)
 
 
