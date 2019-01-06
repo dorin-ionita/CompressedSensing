@@ -27,19 +27,52 @@ classdef WT
         function cVec_list = call(wvn)
             [C, S] = wavedec2(I_Mat, wvn.Level, wvn.Wavelet);
             
-            cMat_list = C(1);
-            for i = 1:length(C)
-                cMat_list = [cMat_list list(C(i))];
+            cVec_list = [];
+            temp = [];
+            cMat_list = [];
+            
+            for i = 1:S(1,1)*S(1,2)
+                temp = [temp C(i)];
             end
             
-            wvn.cMat_shapes = vectorize(cMat_list);
+            cMat_list{1} = temp;
+            temp = [];
             
-            for j = 1:(3*wvn.Level + 1)
-                current = cMat_list(j) * wvn.Amplify(j);
+            offset = i;
+            
+            for x = 2:wvn.Level+1
+                for i=1:S(x,1)*S(x,2)*3
+                    temp = [temp C(offset+i)];
+                end
+                    cMat_list{x} = temp;
+                    offset = offset + i;
+                    temp = [];
+            end
+
+            for i = 1:size(cMat_list,2)
+               wvn.cMat_shapes = [cMat_shapes size(cMat_list{i},2)]
+            end
+            
+            for i = 1:size(cMat_list{1},2)
+                current = cMat_list{1}(i) * wvn.Amplify(1);
                 cVec_list = [cVec_list current];
             end
             
-            reshape(cVec_list, -1);
+            offset = i;
+            joffset = 1;
+            
+            for i = 2:size(cMat_shapes, 2)
+                chunk = cMat_shapes(i)/3;
+                for j = 1:3
+                   for  m = chunk*(j-1)+1:chunk*j
+                       current = cMat_list{i}(m) * wvn.Amplify(joffset+j);
+                       cVec_list = [cVec_list current];
+                   end
+                end
+                joffset = joffset + 3;
+            end
+            
+%             reshape(cVec_list, -1);
         end
         
         function waver = inv(wvn, wavelet_vector)
